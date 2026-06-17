@@ -1,5 +1,8 @@
 import { getCoordinates, getForecast } from "./openMeteoClient";
 import { scoreActivities } from "./scoringService";
+import { ForecastRepository } from "../repositories/forecastRepository";
+
+const repo = new ForecastRepository();
 
 export class WeatherService {
   async rank(city: string) {
@@ -8,12 +11,25 @@ export class WeatherService {
     const location = await getCoordinates(city);
     console.log(`[WeatherService] Coordinates resolved:`, location);
 
-    const forecast = await getForecast(
-      location.latitude,
-      location.longitude
-    );
+    const existing = await repo.getLatestForecast(location.cacheKey);
 
-    console.log(`[WeatherService] Forecast received`);
+    let forecast;
+
+    if (existing) {
+      console.log(`[WeatherService] Using cached forecast`);
+      forecast = existing.data;
+    } else {
+      console.log(`[WeatherService] Fetching from Open-Meteo`);
+
+      forecast = await getForecast(
+        location.latitude,
+        location.longitude
+      );
+
+      await repo.saveForecast(location.cacheKey, forecast);
+    }
+
+    console.log(`[WeatherService] Forecast ready`);
 
     const weather = {
       temperature:
