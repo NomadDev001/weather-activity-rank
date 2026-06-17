@@ -1,23 +1,17 @@
 export const typeDefs = `#graphql
   type Query {
-    rankActivities(city: String!): ActivityRankingResult!
+    rankActivities(city: String!): WeatherResult!
   }
 
-  type ActivityRankingResult {
+  type WeatherResult {
     city: String!
-    rankings: [ActivityRanking!]!
+    forecast: Forecast!
   }
 
-  type ActivityRanking {
-    activity: Activity!
-    score: Float!
-    reason: String!
-  }
-
-  enum Activity {
-    SKIING
-    SURFING
-    OUTDOOR_SIGHTSEEING
-    INDOOR_SIGHTSEEING
+  type Forecast {
+    temperature_2m_max: [Float!]!
+    precipitation_sum: [Float!]!
+    snowfall_sum: [Float!]!
+    windspeed_10m_max: [Float!]!
   }
 `;
