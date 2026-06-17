@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Forecast {
+  id        Int      @id @default(autoincrement())
+  cityId    String
+  fetchedAt DateTime
+  data      String
+}
